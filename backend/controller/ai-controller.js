@@ -92,9 +92,21 @@ export const generateInterviewQuestions = async (req, res) => {
     res.status(201).json({ success: true, data: saved });
   } catch (error) {
     console.error(error);
+
+    let message = error.message || "Failed to generate questions";
+    try {
+      const parsed = JSON.parse(message);
+      message = parsed?.error?.message || parsed?.message || message;
+      if (parsed?.error?.details?.[0]?.message) {
+        message = parsed.error.details[0].message;
+      }
+    } catch (_) {
+      // ignore parse failure
+    }
+
     res.status(500).json({
       success: false,
-      message: "Failed to generate questions",
+      message,
       error: error.message,
     });
   }
@@ -163,20 +175,5 @@ export const generateConceptExplanation = async (req, res) => {
       message: "Failed to generate explanation",
       error: error.message,
     });
-  }
-};
-
-export const getSessionById = async (req, res) => {
-  try {
-    const session = await Session.findById(req.params.id).populate("questions"); // ← this was missing
-
-    if (!session)
-      return res
-        .status(404)
-        .json({ success: false, message: "Session not found" });
-
-    res.status(200).json({ success: true, session });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
   }
 };
