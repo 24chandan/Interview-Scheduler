@@ -21,7 +21,11 @@ let app = express(); // object = {listen}
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://interview-scheduler-2-cd4q.onrender.com",
+      process.env.FRONTEND_URL,
+    ].filter(Boolean),
   }),
 );
 
