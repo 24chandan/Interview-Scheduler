@@ -23,9 +23,11 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://interview-scheduler-2-cd4q.onrender.com",
-      process.env.FRONTEND_URL,
+      "https://interview-scheduler-sigma-nine.vercel.app",
+      
     ].filter(Boolean),
+    methods: ["GET", "POST", "PUT", "DELETE"], 
+    credentials : true;
   }),
 );
 
