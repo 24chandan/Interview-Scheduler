@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_PATHS } from "../utils/apiPaths";
+import { getApiErrorMessage } from "../utils/apiError";
 import axiosInstance from "../utils/axiosInstance";
 import { BsPlus, BsArrowRight, BsLightningChargeFill } from "react-icons/bs";
 
@@ -16,7 +17,7 @@ const Dashboard = () => {
       const res = await axiosInstance.get(API_PATHS.SESSION.GET_ALL);
       setSessions(res.data.sessions);
     } catch (error) {
-      console.log(error.response);
+      console.log("Session fetch error:", error.response?.data || error.message);
     }
   };
 
@@ -38,8 +39,9 @@ const Dashboard = () => {
       setExperience("");
       fetchSessions();
     } catch (error) {
+      const message = getApiErrorMessage(error, "Failed to create session. Please try again.");
       console.log("Session creation error:", error.response?.data || error.message);
-      alert("Failed to create session: " + (error.response?.data?.message || "Unknown error"));
+      alert("Failed to create session: " + message);
     } finally {
       setLoading(false);
     }

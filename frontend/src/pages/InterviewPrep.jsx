@@ -10,36 +10,9 @@ import ErrorBanner from "../components/ErrorBanner";
 import GenerateButton from "../components/GenerateButton";
 import SkeletonCard from "../components/SkeletonCard";
 import { API_PATHS } from "../utils/apiPaths";
+import { getApiErrorMessage } from "../utils/apiError";
 
 import axios from "../utils/axiosInstance";
-
-const parseError = (err) => {
-  console.log(err);
-  if (err.response) {
-    const apiError = err.response.data?.error;
-    if (typeof apiError === "string") {
-      try {
-        const parsed = JSON.parse(apiError);
-        return (
-          parsed?.error?.message ||
-          parsed?.message ||
-          apiError ||
-          err.response.data?.message
-        );
-      } catch {
-        return apiError;
-      }
-    }
-
-    return (
-      err.response.data?.message ||
-      err.response.data?.error ||
-      `Server error: ${err.response.status}`
-    );
-  }
-  if (err.request) return "Cannot reach server. Check your connection.";
-  return err.message || "Something went wrong.";
-};
 
 const InterviewPrep = () => {
   const { id } = useParams();
@@ -59,7 +32,7 @@ const InterviewPrep = () => {
       setQuestions(res.data.session.questions || []);
     } catch (err) {
       console.log(err.response);
-      setFetchError(parseError(err));
+      setFetchError(getApiErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -72,7 +45,7 @@ const InterviewPrep = () => {
       await fetchQuestions();
       toast.success("Questions generated successfully!");
     } catch (err) {
-      toast.error(parseError(err));
+      toast.error(getApiErrorMessage(err));
     } finally {
       setGenerating(false);
     }

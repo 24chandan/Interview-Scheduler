@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { API_PATHS } from "../utils/apiPaths";
 import axios from "../utils/axiosInstance";
+import { getApiErrorMessage } from "../utils/apiError";
 import { BsLightningChargeFill } from "react-icons/bs";
 
 const Login = () => {
@@ -26,8 +27,9 @@ const Login = () => {
       localStorage.setItem("token", res.data.token);
       navigate("/dashboard");
     } catch (error) {
+      const message = getApiErrorMessage(error, "Please check your credentials");
       console.log("Login error:", error.response?.data || error.message);
-      alert("Invalid email and password: " + (error.response?.data?.message || "Please check your credentials"));
+      alert("Invalid email and password: " + message);
     } finally {
       setLoading(false);
     }

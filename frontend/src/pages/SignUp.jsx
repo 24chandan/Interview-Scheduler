@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API_PATHS } from "../utils/apiPaths";
 import axios from "../utils/axiosInstance";
+import { getApiErrorMessage } from "../utils/apiError";
 import { BsLightningChargeFill } from "react-icons/bs";
 
 const SignUp = () => {
@@ -24,8 +25,9 @@ const SignUp = () => {
       await axios.post(API_PATHS.AUTH.SIGNUP, form);
       navigate("/login");
     } catch (error) {
+      const message = getApiErrorMessage(error, "Signup failed. Please try again.");
       console.log("Signup error:", error.response?.data || error.message);
-      alert("Signup failed: " + (error.response?.data?.message || "Unknown error"));
+      alert("Signup failed: " + message);
     } finally {
       setLoading(false);
     }

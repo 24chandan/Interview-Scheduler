@@ -13,16 +13,16 @@ import aiRoutes from "./routes/ai-route.js";
 // Load environment variables
 dotenv.config();
 
-// Connect to database
-connectDB();
-
 // 2) call/invoke the function
 let app = express(); // object = {listen}
+const PORT = process.env.PORT || 9001;
 
 app.use(
   cors({
     origin: [
       "http://localhost:5173",
+      "http://localhost:5175",
+      "http://127.0.0.1:5175",
       "https://interview-scheduler-sigma-nine.vercel.app",
     ].filter(Boolean),
     methods: ["GET", "POST", "PUT", "DELETE"],
@@ -38,9 +38,19 @@ app.use("/api/sessions", sessionRoutes); // http://localhost:9001/api/sessions/c
 app.use("/api/ai", aiRoutes); // http://localhost:9001/api/ai/generate-questions
 
 // 3) assign a port number to our server
-app.listen(9001, () => {
-  console.log("Server Started.....");
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Server Started on port ${PORT}.....`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error.message);
+    process.exit(1);
+  }
+};
+
+startServer();
 // app.listen(PORT_NUMBER, callback)
 
 //! to check if the server is running, in cmd(git bash), goto backend folder and type "npx nodemon index.js"
